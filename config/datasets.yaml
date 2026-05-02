@@ -1,0 +1,428 @@
+datasets:
+  - name: dispatch_price
+    display_name: Dispatch Price
+    description: Regional dispatch interval price outcomes and energy price fields.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/DispatchIS_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/DispatchIS_Reports/
+    file_name_pattern: PUBLIC_DISPATCHIS
+    table_name_pattern: DISPATCHPRICE
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+    standard_columns:
+      - settlementdate
+      - regionid
+      - intervention
+      - rrp
+      - eep
+      - rop
+      - raise6secrrp
+      - raise60secrrp
+      - raise5minrrp
+      - raiseregrrp
+      - lower6secrrp
+      - lower60secrrp
+      - lower5minrrp
+      - lowerregrrp
+      - raise1secrrp
+      - lower1secrrp
+      - lastchanged
+    target_schema: raw
+    target_table: dispatch_price
+
+  - name: dispatch_regionsum
+    display_name: Dispatch Region Summary
+    description: Five-minute regional demand, generation, interchange, and dispatch summary.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/DispatchIS_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/DispatchIS_Reports/
+    file_name_pattern: PUBLIC_DISPATCHIS
+    table_name_pattern: DISPATCHREGIONSUM
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+    standard_columns:
+      - settlementdate
+      - regionid
+      - intervention
+      - totaldemand
+      - availablegeneration
+      - availableload
+      - demandforecast
+      - dispatchablegeneration
+      - dispatchableload
+      - netinterchange
+      - excessgeneration
+      - totalintermittentgeneration
+      - demand_and_nonschedgen
+      - uigf
+      - lastchanged
+    target_schema: raw
+    target_table: dispatch_regionsum
+
+  - name: trading_price
+    display_name: Trading Price
+    description: Trading interval regional price outcomes and market price fields.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/TradingIS_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/TradingIS_Reports/
+    file_name_pattern: PUBLIC_TRADINGIS
+    table_name_pattern: TRADINGPRICE
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+    standard_columns:
+      - settlementdate
+      - regionid
+      - intervention
+      - rrp
+      - eep
+      - rop
+      - lastchanged
+    target_schema: raw
+    target_table: trading_price
+
+  - name: trading_regionsum
+    display_name: Trading Region Summary
+    description: Trading interval regional demand and summary data.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/TradingIS_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/TradingIS_Reports/
+    file_name_pattern: PUBLIC_TRADINGIS
+    table_name_pattern: TRADINGREGIONSUM
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+    standard_columns:
+      - settlementdate
+      - regionid
+      - intervention
+      - totaldemand
+      - availablegeneration
+      - availableload
+      - demandforecast
+      - dispatchablegeneration
+      - dispatchableload
+      - netinterchange
+      - excessgeneration
+      - lastchanged
+    target_schema: raw
+    target_table: trading_regionsum
+
+  - name: dispatch_unit_scada
+    display_name: Dispatch Unit SCADA
+    description: Five-minute unit-level SCADA and telemetry measurements.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Dispatch_SCADA/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Dispatch_SCADA/
+    file_name_pattern: PUBLIC_DISPATCHSCADA
+    table_name_pattern: DISPATCH_UNIT_SCADA
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+    standard_columns:
+      - settlementdate
+      - duid
+      - scadavalue
+      - lastchanged
+    target_schema: raw
+    target_table: dispatch_unit_scada
+
+  - name: dispatch_load
+    display_name: Dispatch Load
+    description: Dispatch interval scheduled load outcomes by DUID where available.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Dispatch_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Dispatch_Reports/
+    file_name_pattern: PUBLIC_DISPATCHLOAD
+    table_name_pattern: DISPATCHLOAD
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+    target_schema: raw
+    target_table: dispatch_load
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: next_day_dispatch
+    display_name: Next Day Dispatch
+    description: Next day dispatch schedule and forecast style dataset.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Next_Day_Dispatch/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Next_Day_Dispatch/
+    file_name_pattern: PUBLIC_NEXT_DAY_DISPATCH
+    table_name_pattern: NEXTDAYDISPATCH
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+    target_schema: raw
+    target_table: next_day_dispatch
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: bids_per_offer
+    display_name: Bids Per Offer
+    description: Offer band and availability data from bid per offer files.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Next_Day_Offer_Energy/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Next_Day_Offer_Energy/
+    file_name_pattern: PUBLIC_BIDPEROFFER
+    table_name_pattern: BIDPEROFFER_D
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+      - bidtype
+    target_schema: raw
+    target_table: bids_per_offer
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: bid_day_offer
+    display_name: Bid Day Offer
+    description: Daily bid metadata and offer-level details.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Yesterdays_Bids_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Yesterdays_Bids_Reports/
+    file_name_pattern: PUBLIC_BIDDAYOFFER
+    table_name_pattern: BIDDAYOFFER_D
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+      - bidtype
+    target_schema: raw
+    target_table: bid_day_offer
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: fcas_price
+    display_name: FCAS Price
+    description: Value weighted average FCAS price outcomes.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/VWA_FCAS_PRICES/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/VWA_FCAS_PRICES/
+    file_name_pattern: PUBLIC_VWAFCASPRICES
+    table_name_pattern: FCASPRICE
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+      - service
+    target_schema: raw
+    target_table: fcas_price
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: fcas_requirements
+    display_name: FCAS Requirements
+    description: FCAS regional requirement records and requirement outcomes.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/ANCILLARY_SERVICES_REPORTS/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/ANCILLARY_SERVICES_REPORTS/
+    file_name_pattern: PUBLIC_FCASREQ
+    table_name_pattern: FCASREQUIREMENT
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+      - service
+    target_schema: raw
+    target_table: fcas_requirements
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: fcas_recovery
+    display_name: FCAS Recovery
+    description: FCAS recovery and cost allocation style records.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Reserve_Contract_Recovery/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Reserve_Contract_Recovery/
+    file_name_pattern: PUBLIC_FCASRECOVERY
+    table_name_pattern: FCASRECOVERY
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - regionid
+    target_schema: raw
+    target_table: fcas_recovery
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: fcas_constraints
+    display_name: FCAS Constraints
+    description: FCAS-related constraint and requirement interactions.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Dispatch_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Dispatch_Reports/
+    file_name_pattern: PUBLIC_FCASCONSTRAINT
+    table_name_pattern: FCASCONSTRAINT
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - constraintid
+    target_schema: raw
+    target_table: fcas_constraints
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: dispatch_constraints
+    display_name: Dispatch Constraints
+    description: Dispatch interval constraint outcomes and marginal values.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Dispatch_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Dispatch_Reports/
+    file_name_pattern: PUBLIC_DISPATCHCONSTRAINT
+    table_name_pattern: DISPATCHCONSTRAINT
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - constraintid
+    standard_columns:
+      - settlementdate
+      - constraintid
+      - marginalvalue
+      - rhs
+      - violationdegree
+      - lastchanged
+    target_schema: raw
+    target_table: dispatch_constraints
+
+  - name: constraint_rhs
+    display_name: Constraint RHS
+    description: Constraint right-hand-side values and outcomes.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Network/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Network/
+    file_name_pattern: PUBLIC_CONSTRAINTRHS
+    table_name_pattern: CONSTRAINTRHS
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - constraintid
+    target_schema: raw
+    target_table: constraint_rhs
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: constraint_details
+    display_name: Constraint Details
+    description: Constraint metadata, attributes, and mapping details.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Network/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Network/
+    file_name_pattern: PUBLIC_CONSTRAINTDETAIL
+    table_name_pattern: CONSTRAINTDETAIL
+    datetime_column: effectivedate
+    primary_keys:
+      - constraintid
+      - effectivedate
+    target_schema: raw
+    target_table: constraint_details
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: constraint_equations
+    display_name: Constraint Equations
+    description: Constraint equation terms and factor definitions.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Network/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Network/
+    file_name_pattern: PUBLIC_CONSTRAINTEQUATION
+    table_name_pattern: CONSTRAINTEQUATION
+    datetime_column: effectivedate
+    primary_keys:
+      - constraintid
+      - effectivedate
+    target_schema: raw
+    target_table: constraint_equations
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: interconnector_results
+    display_name: Interconnector Results
+    description: Interconnector flow and marginal loss result records.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/TradingIS_Reports/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/TradingIS_Reports/
+    file_name_pattern: PUBLIC_TRADINGIS
+    table_name_pattern: INTERCONNECTORRES
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - interconnectorid
+    target_schema: raw
+    target_table: interconnector_results
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: rooftop_pv_actual
+    display_name: Rooftop PV Actual
+    description: Actual measured rooftop PV estimates from NEMWeb.
+    enabled: true
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/ROOFTOP_PV/ACTUAL/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/ROOFTOP_PV/ACTUAL/
+    file_name_pattern: PUBLIC_ROOFTOP_PV_ACTUAL
+    table_name_pattern: ROOFTOPPVACTUAL
+    datetime_column: interval_datetime
+    primary_keys:
+      - interval_datetime
+      - regionid
+      - measurement_type
+    standard_columns:
+      - interval_datetime
+      - regionid
+      - measurement_type
+      - mw
+      - lastchanged
+    target_schema: raw
+    target_table: rooftop_pv_actual
+
+  - name: intermittent_generation
+    display_name: Intermittent Generation
+    description: Intermittent generation related forecasts or actuals.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Next_Day_Intermittent_DS/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Next_Day_Intermittent_DS/
+    file_name_pattern: PUBLIC_NEXT_DAY_INTERMITTENT
+    table_name_pattern: INTERMITTENTGENERATION
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+    target_schema: raw
+    target_table: intermittent_generation
+    note: Verify NEMWeb directory and table pattern before enabling.
+
+  - name: semi_scheduled_generation
+    display_name: Semi-Scheduled Generation
+    description: Semi-scheduled generation and intermittent unit records.
+    enabled: false
+    directory_urls:
+      - https://www.nemweb.com.au/REPORTS/CURRENT/Next_Day_Intermittent_Gen_Scada/
+      - https://www.nemweb.com.au/REPORTS/ARCHIVE/Next_Day_Intermittent_Gen_Scada/
+    file_name_pattern: PUBLIC_NEXT_DAY_INTERMITTENT_GEN_SCADA
+    table_name_pattern: SEMISCHEDULEDGENERATION
+    datetime_column: settlementdate
+    primary_keys:
+      - settlementdate
+      - duid
+    target_schema: raw
+    target_table: semi_scheduled_generation
+    note: Verify NEMWeb directory and table pattern before enabling.

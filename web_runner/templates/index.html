@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEMO NEMWeb Market Data Pipeline</title>
+    <style>
+        :root {
+            --bg: #eef3f2;
+            --bg-strong: #e4edeb;
+            --panel: rgba(255, 255, 255, 0.92);
+            --panel-solid: #ffffff;
+            --panel-soft: #f7faf9;
+            --ink: #162d2a;
+            --muted: #647875;
+            --line: #d9e5e2;
+            --brand: #0f766e;
+            --brand-strong: #0a5c56;
+            --brand-soft: #daf4ee;
+            --accent: #d97706;
+            --accent-soft: #fff1dd;
+            --danger: #b42318;
+            --danger-soft: #fde9e7;
+            --shadow: 0 18px 50px rgba(16, 33, 30, 0.08);
+            --radius-xl: 26px;
+            --radius-lg: 18px;
+            --radius-md: 14px;
+        }
+
+        body.dark-theme {
+            --bg: #0b1315;
+            --bg-strong: #111d20;
+            --panel: rgba(19, 31, 35, 0.88);
+            --panel-solid: #132125;
+            --panel-soft: #18292d;
+            --ink: #e6f2ef;
+            --muted: #9bb3ae;
+            --line: #264146;
+            --brand: #45c6b8;
+            --brand-strong: #96ece2;
+            --brand-soft: rgba(69, 198, 184, 0.12);
+            --accent: #f0b556;
+            --accent-soft: rgba(240, 181, 86, 0.12);
+            --danger: #ff9a90;
+            --danger-soft: rgba(255, 154, 144, 0.12);
+            --shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Avenir Next", "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.12), transparent 26%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg-strong) 100%);
+        }
+
+        .page {
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 24px 18px 40px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .app-chip,
+        .theme-toggle,
+        .status-pill,
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            font-weight: 800;
+        }
+
+        .app-chip,
+        .theme-toggle {
+            padding: 10px 14px;
+            border: 1px solid var(--line);
+            background: var(--panel-solid);
+            box-shadow: var(--shadow);
+        }
+
+        .app-chip {
+            color: var(--brand-strong);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .theme-toggle {
+            color: var(--ink);
+            font-size: 0.92rem;
+        }
+
+        .theme-toggle input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--brand);
+        }
+
+        .hero {
+            padding: 34px;
+            border-radius: var(--radius-xl);
+            background:
+                linear-gradient(135deg, rgba(15, 118, 110, 0.12), rgba(255, 255, 255, 0.5)),
+                var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-top {
+            display: block;
+        }
+
+        .hero-copy {
+            max-width: 980px;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.9rem, 3.3vw, 3.7rem);
+            line-height: 0.98;
+            letter-spacing: -0.05em;
+        }
+
+        .subtitle {
+            margin: 0 0 12px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--brand-strong);
+        }
+
+        .hero p,
+        .section-note,
+        .subtle,
+        .helper-box,
+        .connection-status,
+        .message-box,
+        .result-card p,
+        .existing-card p,
+        .log-empty {
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .flow-strip,
+        .control-strip,
+        .model-strip,
+        .dataset-toolbar,
+        .action-row,
+        .summary-grid,
+        .results-grid,
+        .bottom-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .flow-strip,
+        .summary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .control-strip {
+            grid-template-columns: 1.15fr 1fr 1.35fr;
+        }
+
+        .model-strip {
+            grid-template-columns: 0.95fr 1.45fr;
+        }
+
+        .dataset-toolbar {
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+        }
+
+        .action-row {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .results-grid {
+            grid-template-columns: 1.05fr 0.95fr;
+            align-items: start;
+        }
+
+        .bottom-grid {
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+        }
+
+        .section {
+            margin-top: 18px;
+            padding: 24px;
+            border-radius: var(--radius-xl);
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            margin: 0 0 4px;
+            font-size: 1.28rem;
+            letter-spacing: -0.02em;
+        }
+
+        .step-card,
+        .control-card,
+        .summary-card,
+        .status-panel,
+        .pipeline-panel,
+        .result-card,
+        .existing-card,
+        .helper-box,
+        .connection-status,
+        .message-box {
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+        }
+
+        .step-card,
+        .control-card,
+        .summary-card,
+        .status-panel,
+        .pipeline-panel,
+        .result-card,
+        .existing-card,
+        .helper-box,
+        .connection-status,
+        .message-box {
+            padding: 18px;
+        }
+
+        .step-card strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--brand-strong);
+            font-size: 0.88rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .step-card h3,
+        .result-card h3,
+        .existing-card h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: var(--ink);
+        }
+
+        .step-card {
+            min-height: 200px;
+        }
+
+        .fields-inline,
+        .quick-range-row,
+        .button-row,
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .fields-inline {
+            margin-top: 14px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+            min-width: 140px;
+            flex: 1 1 0;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--line);
+            background: var(--panel-solid);
+            color: var(--ink);
+            font-size: 0.97rem;
+        }
+
+        input[type="date"]:focus,
+        select:focus {
+            outline: 2px solid rgba(15, 118, 110, 0.16);
+            border-color: var(--brand);
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+
+        button:hover { transform: translateY(-1px); }
+        button:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+        .primary-button,
+        .secondary-button,
+        .chip-button {
+            padding: 12px 15px;
+            border-radius: 14px;
+            font-size: 0.93rem;
+            font-weight: 800;
+        }
+
+        .primary-button {
+            color: white;
+            background: linear-gradient(135deg, var(--brand) 0%, #1e988c 100%);
+            box-shadow: 0 14px 28px rgba(15, 118, 110, 0.2);
+        }
+
+        .secondary-button,
+        .chip-button {
+            color: var(--brand-strong);
+            background: var(--panel-solid);
+            border: 1px solid var(--line);
+        }
+
+        .dataset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            max-height: 430px;
+            overflow: auto;
+        }
+
+        .dataset-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+        }
+
+        .dataset-card input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--brand);
+        }
+
+        .dataset-card h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+        }
+
+        .pill {
+            padding: 6px 10px;
+            background: var(--brand-soft);
+            color: var(--brand-strong);
+            font-size: 0.78rem;
+        }
+
+        .status-pill {
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .status-idle { background: #edf1f3; color: #56666d; }
+        .status-processing { background: var(--brand-soft); color: var(--brand-strong); }
+        .status-completed { background: var(--brand-soft); color: var(--brand-strong); }
+        .status-failed { background: var(--danger-soft); color: var(--danger); }
+        .status-already { background: var(--accent-soft); color: var(--accent); }
+
+        body.dark-theme .status-idle {
+            background: #1b2a2e;
+            color: #9db0b5;
+        }
+
+        .status-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .status-layout {
+            display: grid;
+            grid-template-columns: 1.15fr 1.85fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .runtime {
+            font-size: 2.35rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: var(--ink);
+        }
+
+        .processing-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 3px solid rgba(15, 118, 110, 0.15);
+            border-top-color: var(--brand);
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .stage-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .stage-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--panel-soft);
+            font-size: 0.9rem;
+        }
+
+        .stage-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 999px;
+            background: #cbd6d9;
+            flex-shrink: 0;
+        }
+
+        .stage-active .stage-dot { background: var(--accent); }
+        .stage-done .stage-dot { background: var(--brand); }
+
+        .summary-card strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1.38rem;
+            color: var(--ink);
+        }
+
+        .results-list,
+        .existing-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .terminal {
+            min-height: 330px;
+            max-height: 500px;
+            overflow: auto;
+            padding: 18px;
+            border-radius: 18px;
+            background: #0f1720;
+            color: #d7f2ec;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 0.86rem;
+            line-height: 1.58;
+            white-space: pre-wrap;
+        }
+
+        body.dark-theme .terminal {
+            background: #081012;
+            color: #d9f6f0;
+            border: 1px solid #17282c;
+        }
+
+        .message-box {
+            margin-top: 14px;
+            line-height: 1.6;
+        }
+
+        .message-info { background: #eef8ff; color: #17506b; border-color: #c8e5f5; }
+        .message-error { background: var(--danger-soft); color: var(--danger); border-color: rgba(180, 35, 24, 0.18); }
+
+        body.dark-theme .message-info {
+            background: rgba(44, 98, 128, 0.16);
+            color: #acdff9;
+            border-color: rgba(92, 156, 190, 0.28);
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 1240px) {
+            .control-strip,
+            .model-strip,
+            .dataset-toolbar,
+            .results-grid,
+            .bottom-grid,
+            .flow-strip,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-metrics {
+                min-width: 0;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .stage-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .status-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero-top,
+            .dataset-grid,
+            .action-row,
+            .stage-list,
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar,
+            .section-header,
+            .status-line {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page {
+                padding: 18px 14px 32px;
+            }
+
+            .hero,
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="topbar">
+            <div class="app-chip">AEMO NEMWeb Operations Dashboard</div>
+            <label class="theme-toggle" for="themeToggle">
+                <input id="themeToggle" type="checkbox">
+                <span id="themeToggleLabel">Dark mode</span>
+            </label>
+        </div>
+
+        <section class="hero">
+            <div class="hero-top">
+                <div class="hero-copy">
+                    <h1>AEMO NEMWeb Market Data Pipeline</h1>
+                    <p class="subtitle">Download, clean, validate, and load Australian electricity market data into PostgreSQL.</p>
+                    <p>
+                        Select a date range, choose an analysis model, review the recommended datasets, and run the pipeline.
+                        The app checks for existing data first, avoids duplicate loads, and stores clean output for pgAdmin, Power BI, and Python workflows.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2>Pipeline Flow</h2>
+                    <p class="section-note">A simple four-step workflow from selection to execution.</p>
+                </div>
+            </div>
+            <div class="flow-strip">
+                <div class="step-card">
+                    <strong>Step 1</strong>
+                    <h3>Choose dates</h3>
+                    <p>Use quick slicers or exact start and end dates.</p>
+                </div>
+                <div class="step-card">
+                    <strong>Step 2</strong>
+                    <h3>Select model</h3>
+                    <p>Use a business model to preselect the most relevant datasets.</p>
+                </div>
+                <div class="step-card">
+                    <strong>Step 3</strong>
+                    <h3>Review datasets</h3>
+                    <p>Keep the recommended core tables or manually adjust the list.</p>
+                </div>
+                <div class="step-card">
+                    <strong>Step 4</strong>
+                    <h3>Run and monitor</h3>
+                    <p>Track progress, duplicate checks, results, and live logs.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2>Pipeline Setup</h2>
+                    <p class="section-note">The raw load is currently aligned to standard business columns such as settlement date, region, price, demand, generation, and SCADA values.</p>
+                </div>
+            </div>
+
+            <div class="control-strip">
+                <div class="control-card">
+                    <label>Date slicers</label>
+                    <div class="quick-range-row" style="margin-top: 12px;">
+                        <button class="chip-button" type="button" data-range="today">Today</button>
+                        <button class="chip-button" type="button" data-range="yesterday">Yesterday</button>
+                        <button class="chip-button" type="button" data-range="current_week">Current Week</button>
+                        <button class="chip-button" type="button" data-range="last_7_days">Last 7 Days</button>
+                        <button class="chip-button" type="button" data-range="current_month">Current Month</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <label>Date range</label>
+                    <div class="fields-inline">
+                        <div class="field">
+                            <label for="startDate">Start</label>
+                            <input id="startDate" type="date">
+                        </div>
+                        <div class="field">
+                            <label for="endDate">End</label>
+                            <input id="endDate" type="date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <label>Month selection</label>
+                    <div class="fields-inline">
+                        <div class="field">
+                            <label for="yearSelect">Year</label>
+                            <select id="yearSelect"></select>
+                        </div>
+                        <div class="field">
+                            <label for="monthSelect">Month</label>
+                            <select id="monthSelect"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="model-strip" style="margin-top: 16px;">
+                <div class="control-card">
+                    <label for="businessModel">Business model</label>
+                    <div class="fields-inline">
+                        <div class="field" style="min-width: 100%;">
+                            <select id="businessModel"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="helper-box">
+                    <strong style="display:block;margin-bottom:8px;color:var(--brand-strong);">Model guidance</strong>
+                    <div id="businessModelDescription">Select a business model to see the recommended dataset bundle.</div>
+                    <div id="businessModelDatasets" style="margin-top:10px;">Recommended datasets will appear here.</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <div class="section-header" style="margin-bottom: 12px;">
+                    <div>
+                        <h2 style="font-size:1.02rem;margin-bottom:4px;">Datasets</h2>
+                        <p class="section-note">Core tables are ready to use. Advanced datasets remain optional and can be selected manually.</p>
+                    </div>
+                </div>
+                <div id="datasetGrid" class="dataset-grid">
+                    {% for dataset_name, dataset in datasets.items() %}
+                    <label class="dataset-card">
+                        <input type="checkbox" name="dataset" value="{{ dataset_name }}">
+                        <div>
+                            <h3>{{ dataset.display_name }}</h3>
+                            <p>{{ dataset.description }}</p>
+                            <div class="pill-row" style="margin-top: 10px;">
+                                <span class="pill">{{ dataset.target_schema }}.{{ dataset.target_table }}</span>
+                                <span class="pill">{{ dataset.datetime_column }}</span>
+                                {% if dataset.enabled %}
+                                <span class="pill">Enabled</span>
+                                {% else %}
+                                <span class="pill">Advanced</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="dataset-toolbar" style="margin-top: 16px;">
+                <div class="helper-box">
+                    <strong style="display:block;margin-bottom:8px;color:var(--brand-strong);">Selection controls</strong>
+                    <p>Use the recommended enabled datasets, keep all enabled core tables, or clear the list before manually choosing tables.</p>
+                    <div class="fields-inline" style="margin-top: 12px;">
+                        <button id="useRecommendedButton" class="chip-button" type="button">Use Recommended</button>
+                        <button id="useEnabledButton" class="chip-button" type="button">Use Enabled Core</button>
+                        <button id="clearSelectionButton" class="chip-button" type="button">Clear Selection</button>
+                    </div>
+                </div>
+
+                <div class="helper-box">
+                    <strong style="display:block;margin-bottom:8px;color:var(--brand-strong);">Operational checks</strong>
+                    <div id="dbConnectionStatus" class="connection-status">Database status not tested yet.</div>
+                </div>
+            </div>
+
+            <div class="action-row" style="margin-top: 16px;">
+                <button id="runButton" class="primary-button" type="button">Run Pipeline</button>
+                <button id="checkExistingButton" class="secondary-button" type="button">Check Existing Data</button>
+                <button id="testDbButton" class="secondary-button" type="button">Test Database Connection</button>
+                <button id="clearLogsButton" class="secondary-button" type="button">Clear Logs</button>
+            </div>
+
+            <div id="formMessage" class="message-box message-info hidden"></div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2>Run Status</h2>
+                    <p class="section-note">Everything important during execution is grouped here.</p>
+                </div>
+            </div>
+
+            <div class="status-layout">
+                <div class="status-panel">
+                    <div class="status-line">
+                        <div id="currentStatusPill" class="status-pill status-idle">Idle</div>
+                        <div id="runtimeValue" class="runtime">00:00</div>
+                    </div>
+                    <div id="statusMessage">The pipeline is idle and ready.</div>
+                    <div id="processingRow" class="processing-row hidden">
+                        <div class="spinner"></div>
+                        <span>Pipeline is processing. Please keep this window open.</span>
+                    </div>
+                </div>
+
+                <div id="summaryCards" class="summary-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;">
+                    <div class="summary-card"><strong>Idle</strong><span>Current status</span></div>
+                    <div class="summary-card"><strong>N/A</strong><span>Date range</span></div>
+                    <div class="summary-card"><strong>Custom</strong><span>Business model</span></div>
+                    <div class="summary-card"><strong>0</strong><span>Rows loaded</span></div>
+                    <div class="summary-card"><strong>0</strong><span>Tables created</span></div>
+                    <div class="summary-card"><strong>0</strong><span>Existing rows skipped</span></div>
+                </div>
+            </div>
+
+            <div class="pipeline-panel" style="margin-top:16px;">
+                <div class="section-header" style="margin-bottom: 12px;">
+                    <div>
+                        <h2 style="font-size:1.02rem;margin-bottom:4px;">Pipeline stages</h2>
+                        <p class="section-note">The active stage highlights where the run is currently working.</p>
+                    </div>
+                </div>
+                <div id="progressStageList" class="stage-list"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2>Results and Checks</h2>
+                    <p class="section-note">Review table-level outcomes and duplicate-period checks side by side.</p>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div>
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <div>
+                            <h2 style="font-size:1.02rem;margin-bottom:4px;">Dataset results</h2>
+                        </div>
+                    </div>
+                    <div id="resultCards" class="results-list">
+                        <div class="result-card">
+                            <h3>No pipeline run yet</h3>
+                            <p>Run the pipeline to see per-table file detection, rows loaded, and any clear error messages here.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <div>
+                            <h2 style="font-size:1.02rem;margin-bottom:4px;">Existing data check</h2>
+                        </div>
+                    </div>
+                    <div id="existingDataPanel" class="existing-list">
+                        <div class="existing-card">
+                            <h3>No duplicate check yet</h3>
+                            <p>Use Check Existing Data to confirm whether the selected date range is already loaded in PostgreSQL.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h2>Live Logs</h2>
+                    <p class="section-note">Execution logs stream here while the pipeline runs.</p>
+                </div>
+            </div>
+            <div id="logPanel" class="terminal">Waiting for pipeline activity...</div>
+        </section>
+    </div>
+
+    <script>
+        const DATASETS = {{ datasets | tojson }};
+        const BUSINESS_MODELS = {{ business_models | tojson }};
+        const PROGRESS_STAGES = {{ progress_stages | tojson }};
+        const THEME_STORAGE_KEY = "nemweb-theme";
+
+        let statusTimer = null;
+        let logTimer = null;
+
+        function byId(id) {
+            return document.getElementById(id);
+        }
+
+        function showMessage(text, isError = false) {
+            const box = byId("formMessage");
+            box.textContent = text;
+            box.className = "message-box " + (isError ? "message-error" : "message-info");
+            box.classList.remove("hidden");
+        }
+
+        function hideMessage() {
+            byId("formMessage").classList.add("hidden");
+        }
+
+        function applyTheme(themeName) {
+            const darkMode = themeName === "dark";
+            document.body.classList.toggle("dark-theme", darkMode);
+            byId("themeToggle").checked = darkMode;
+            byId("themeToggleLabel").textContent = darkMode ? "Light mode" : "Dark mode";
+            window.localStorage.setItem(THEME_STORAGE_KEY, themeName);
+        }
+
+        function initialiseTheme() {
+            const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+            applyTheme(storedTheme || "light");
+            byId("themeToggle").addEventListener("change", (event) => {
+                applyTheme(event.target.checked ? "dark" : "light");
+            });
+        }
+
+        function formatDate(dateValue) {
+            const year = dateValue.getFullYear();
+            const month = String(dateValue.getMonth() + 1).padStart(2, "0");
+            const day = String(dateValue.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+
+        function setDateRange(startDate, endDate) {
+            byId("startDate").value = formatDate(startDate);
+            byId("endDate").value = formatDate(endDate);
+            byId("yearSelect").value = String(startDate.getFullYear());
+            byId("monthSelect").value = String(startDate.getMonth() + 1).padStart(2, "0");
+        }
+
+        function applyQuickRange(rangeName) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const end = new Date(today);
+            const start = new Date(today);
+
+            if (rangeName === "today") {
+                setDateRange(start, end);
+                return;
+            }
+            if (rangeName === "yesterday") {
+                start.setDate(start.getDate() - 1);
+                end.setDate(end.getDate() - 1);
+                setDateRange(start, end);
+                return;
+            }
+            if (rangeName === "current_week") {
+                const dayIndex = today.getDay();
+                const mondayShift = dayIndex === 0 ? 6 : dayIndex - 1;
+                start.setDate(today.getDate() - mondayShift);
+                setDateRange(start, end);
+                return;
+            }
+            if (rangeName === "last_7_days") {
+                start.setDate(today.getDate() - 6);
+                setDateRange(start, end);
+                return;
+            }
+            if (rangeName === "current_month") {
+                start.setDate(1);
+                setDateRange(start, end);
+            }
+        }
+
+        function formatSeconds(totalSeconds) {
+            const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+            const seconds = String(totalSeconds % 60).padStart(2, "0");
+            return `${minutes}:${seconds}`;
+        }
+
+        function populateYearMonthControls() {
+            const now = new Date();
+            const yearSelect = byId("yearSelect");
+            const monthSelect = byId("monthSelect");
+            yearSelect.innerHTML = `<option value="">Select year</option>`;
+            monthSelect.innerHTML = `<option value="">Select month</option>`;
+
+            for (let year = now.getFullYear() - 5; year <= now.getFullYear() + 1; year += 1) {
+                yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+            }
+
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            monthNames.forEach((name, index) => {
+                const monthValue = String(index + 1).padStart(2, "0");
+                monthSelect.innerHTML += `<option value="${monthValue}">${name}</option>`;
+            });
+        }
+
+        function populateBusinessModels() {
+            const select = byId("businessModel");
+            select.innerHTML = "";
+            Object.entries(BUSINESS_MODELS).forEach(([key, model]) => {
+                select.innerHTML += `<option value="${key}">${model.label}</option>`;
+            });
+            select.value = "price_drivers_analysis";
+            updateBusinessModelSelection();
+        }
+
+        function selectedDatasets() {
+            return Array.from(document.querySelectorAll('input[name="dataset"]:checked')).map((node) => node.value);
+        }
+
+        function enabledDatasetNames() {
+            return Object.entries(DATASETS)
+                .filter(([, dataset]) => Boolean(dataset.enabled))
+                .map(([name]) => name);
+        }
+
+        function recommendedDatasetsForCurrentModel() {
+            const selected = byId("businessModel").value;
+            const model = BUSINESS_MODELS[selected];
+            if (!model) {
+                return [];
+            }
+            if (model.datasets === "__ENABLED__") {
+                return enabledDatasetNames();
+            }
+            return model.datasets.filter((datasetName) => DATASETS[datasetName] && DATASETS[datasetName].enabled);
+        }
+
+        function tickDatasets(datasetNames) {
+            document.querySelectorAll('input[name="dataset"]').forEach((node) => {
+                node.checked = datasetNames.includes(node.value);
+            });
+        }
+
+        function updateBusinessModelSelection() {
+            const selected = byId("businessModel").value;
+            const model = BUSINESS_MODELS[selected];
+            if (!model) {
+                return;
+            }
+
+            byId("businessModelDescription").textContent = model.description;
+
+            if (selected === "custom_dataset_selection") {
+                byId("businessModelDatasets").textContent = "Custom mode is active. Manually tick only the datasets you want to load.";
+                return;
+            }
+
+            const recommended = recommendedDatasetsForCurrentModel();
+            const skippedAdvanced = model.datasets === "__ENABLED__"
+                ? []
+                : model.datasets.filter((datasetName) => DATASETS[datasetName] && !DATASETS[datasetName].enabled);
+
+            const recommendedLabels = recommended.map((datasetName) => DATASETS[datasetName].display_name);
+            const skippedLabels = skippedAdvanced.map((datasetName) => DATASETS[datasetName].display_name);
+
+            let helperText = `Recommended and auto-selected: ${recommendedLabels.join(", ") || "None"}.`;
+            if (skippedLabels.length > 0) {
+                helperText += ` Advanced datasets not auto-selected: ${skippedLabels.join(", ")}.`;
+            }
+
+            byId("businessModelDatasets").textContent = helperText;
+            tickDatasets(recommended);
+        }
+
+        function updateDateRangeFromYearMonth() {
+            const year = byId("yearSelect").value;
+            const month = byId("monthSelect").value;
+            if (!year || !month) {
+                return;
+            }
+            const start = new Date(Number(year), Number(month) - 1, 1);
+            const end = new Date(Number(year), Number(month), 0);
+            setDateRange(start, end);
+        }
+
+        function currentPayload() {
+            return {
+                start_date: byId("startDate").value,
+                end_date: byId("endDate").value,
+                year: byId("yearSelect").value,
+                month: byId("monthSelect").value,
+                business_model: byId("businessModel").value,
+                datasets: selectedDatasets(),
+                force_reload: false
+            };
+        }
+
+        function renderProgressStages(activeIndex) {
+            const container = byId("progressStageList");
+            container.innerHTML = "";
+            PROGRESS_STAGES.forEach((stage, index) => {
+                const oneBased = index + 1;
+                let className = "";
+                if (activeIndex > oneBased) {
+                    className = "stage-done";
+                } else if (activeIndex === oneBased) {
+                    className = "stage-active";
+                }
+                container.innerHTML += `
+                    <div class="stage-item ${className}">
+                        <div class="stage-dot"></div>
+                        <div>${oneBased}. ${stage}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function statusClass(statusText) {
+            const lowered = String(statusText || "Idle").toLowerCase();
+            if (lowered === "processing" || lowered === "queued") return "status-processing";
+            if (lowered === "completed") return "status-completed";
+            if (lowered === "failed") return "status-failed";
+            return "status-idle";
+        }
+
+        function setCurrentStatus(status, message, elapsedSeconds) {
+            const pill = byId("currentStatusPill");
+            pill.className = `status-pill ${statusClass(status)}`;
+            pill.textContent = status;
+            byId("statusMessage").textContent = message || "";
+            byId("runtimeValue").textContent = formatSeconds(elapsedSeconds || 0);
+            const running = String(status).toLowerCase() === "processing" || String(status).toLowerCase() === "queued";
+            byId("processingRow").classList.toggle("hidden", !running);
+            byId("runButton").disabled = running;
+        }
+
+        function renderSummary(statusPayload) {
+            const summary = statusPayload.summary;
+            if (!summary) {
+                return;
+            }
+
+            const rangeText = `${summary.selected_date_range.start_date} to ${summary.selected_date_range.end_date}`;
+            const selectedModel = BUSINESS_MODELS[summary.business_model]?.label || "Custom";
+            byId("summaryCards").innerHTML = `
+                <div class="summary-card"><strong>${summary.current_status}</strong><span>Current status</span></div>
+                <div class="summary-card"><strong>${rangeText}</strong><span>Date range</span></div>
+                <div class="summary-card"><strong>${selectedModel}</strong><span>Business model</span></div>
+                <div class="summary-card"><strong>${summary.rows_loaded}</strong><span>Rows loaded</span></div>
+                <div class="summary-card"><strong>${summary.tables_created}</strong><span>Tables created</span></div>
+                <div class="summary-card"><strong>${summary.existing_rows_skipped}</strong><span>Existing rows skipped</span></div>
+            `;
+
+            const results = summary.results || [];
+            const resultCards = byId("resultCards");
+            resultCards.innerHTML = "";
+            if (results.length === 0) {
+                resultCards.innerHTML = `
+                    <div class="result-card">
+                        <h3>No dataset results</h3>
+                        <p>No dataset-level results were returned for this run.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            results.forEach((result) => {
+                let badgeClass = "status-idle";
+                if (result.status === "success") badgeClass = "status-completed";
+                if (result.status === "already_exists") badgeClass = "status-already";
+                if (result.status === "failed") badgeClass = "status-failed";
+
+                resultCards.innerHTML += `
+                    <div class="result-card">
+                        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                            <h3>${result.display_name || result.dataset}</h3>
+                            <div class="status-pill ${badgeClass}">${String(result.status || "idle").replaceAll("_", " ")}</div>
+                        </div>
+                        <div class="pill-row" style="margin-top:10px;">
+                            <span class="pill">Files detected: ${result.files_detected || 0}</span>
+                            <span class="pill">Rows loaded: ${result.rows_loaded || 0}</span>
+                            <span class="pill">Tables created: ${result.tables_created || 0}</span>
+                            <span class="pill">Existing rows skipped: ${result.existing_rows_skipped || 0}</span>
+                        </div>
+                        <p style="margin-top:10px;">${result.message || "No message returned."}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function renderExistingData(results) {
+            const panel = byId("existingDataPanel");
+            panel.innerHTML = "";
+            if (!results || results.length === 0) {
+                panel.innerHTML = `
+                    <div class="existing-card">
+                        <h3>No duplicate check result</h3>
+                        <p>No rows were returned for the duplicate check.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            results.forEach((row) => {
+                let badgeClass = "status-idle";
+                let badgeText = "No existing data";
+                if (row.already_loaded) {
+                    badgeClass = "status-already";
+                    badgeText = "Already loaded";
+                } else if (row.partial_overlap) {
+                    badgeClass = "status-processing";
+                    badgeText = "Partial overlap";
+                }
+
+                panel.innerHTML += `
+                    <div class="existing-card">
+                        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">
+                            <h3>${row.display_name}</h3>
+                            <div class="status-pill ${badgeClass}">${badgeText}</div>
+                        </div>
+                        <div class="pill-row" style="margin-top:10px;">
+                            <span class="pill">${row.target_table}</span>
+                            <span class="pill">Rows in range: ${row.rows_in_range}</span>
+                            <span class="pill">Min: ${row.min_datetime}</span>
+                            <span class="pill">Max: ${row.max_datetime}</span>
+                        </div>
+                        <p style="margin-top:10px;">${row.status_message}</p>
+                    </div>
+                `;
+            });
+        }
+
+        async function fetchJson(url, options = {}) {
+            const response = await fetch(url, options);
+            const payload = await response.json();
+            if (!response.ok || payload.ok === false) {
+                throw new Error(payload.error || payload.message || "Request failed.");
+            }
+            return payload;
+        }
+
+        async function refreshStatus() {
+            const payload = await fetchJson("/api/status");
+            setCurrentStatus(payload.status, payload.message, payload.elapsed_seconds);
+            renderProgressStages(payload.stage_index || 0);
+            if (payload.summary) {
+                renderSummary(payload);
+            }
+            if (String(payload.status).toLowerCase() === "completed" || String(payload.status).toLowerCase() === "failed") {
+                stopPolling();
+            }
+            if (payload.error) {
+                showMessage(payload.error, true);
+            }
+        }
+
+        async function refreshLogs() {
+            const payload = await fetchJson("/api/logs");
+            const lines = payload.logs || [];
+            byId("logPanel").textContent = lines.join("\n") || "No logs yet.";
+            byId("logPanel").scrollTop = byId("logPanel").scrollHeight;
+        }
+
+        function startPolling() {
+            stopPolling();
+            statusTimer = setInterval(refreshStatus, 1500);
+            logTimer = setInterval(refreshLogs, 1500);
+        }
+
+        function stopPolling() {
+            if (statusTimer) clearInterval(statusTimer);
+            if (logTimer) clearInterval(logTimer);
+            statusTimer = null;
+            logTimer = null;
+        }
+
+        async function runPipeline() {
+            hideMessage();
+            const payload = currentPayload();
+            if (!payload.start_date || !payload.end_date) {
+                showMessage("Select a start date and end date first.", true);
+                return;
+            }
+            if (payload.datasets.length === 0) {
+                showMessage("Select at least one dataset before running the pipeline.", true);
+                return;
+            }
+
+            setCurrentStatus("Processing", "Pipeline is processing. Please keep this window open.", 0);
+            renderProgressStages(1);
+            showMessage("Pipeline is processing. Please keep this window open.");
+
+            try {
+                await fetchJson("/run-pipeline", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                });
+                startPolling();
+                await refreshStatus();
+                await refreshLogs();
+            } catch (error) {
+                setCurrentStatus("Failed", error.message, 0);
+                showMessage(error.message, true);
+            }
+        }
+
+        async function checkExistingData() {
+            hideMessage();
+            const payload = currentPayload();
+            if (!payload.start_date || !payload.end_date) {
+                showMessage("Select a start date and end date first.", true);
+                return;
+            }
+            try {
+                const response = await fetchJson("/check-existing-data", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                });
+                renderExistingData(response.results);
+                showMessage("Existing data check completed.");
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        async function testDbConnection() {
+            try {
+                const payload = await fetchJson("/test-db-connection", { method: "POST" });
+                byId("dbConnectionStatus").textContent = payload.message;
+            } catch (error) {
+                byId("dbConnectionStatus").textContent = error.message;
+                showMessage(error.message, true);
+            }
+        }
+
+        async function clearLogs() {
+            try {
+                const payload = await fetchJson("/clear-logs", { method: "POST" });
+                byId("logPanel").textContent = "Logs cleared.";
+                showMessage(payload.message);
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        function initialise() {
+            initialiseTheme();
+            populateYearMonthControls();
+            populateBusinessModels();
+            renderProgressStages(0);
+            applyQuickRange("last_7_days");
+
+            byId("businessModel").addEventListener("change", updateBusinessModelSelection);
+            byId("yearSelect").addEventListener("change", updateDateRangeFromYearMonth);
+            byId("monthSelect").addEventListener("change", updateDateRangeFromYearMonth);
+            byId("runButton").addEventListener("click", runPipeline);
+            byId("checkExistingButton").addEventListener("click", checkExistingData);
+            byId("testDbButton").addEventListener("click", testDbConnection);
+            byId("clearLogsButton").addEventListener("click", clearLogs);
+            byId("useRecommendedButton").addEventListener("click", () => tickDatasets(recommendedDatasetsForCurrentModel()));
+            byId("useEnabledButton").addEventListener("click", () => tickDatasets(enabledDatasetNames()));
+            byId("clearSelectionButton").addEventListener("click", () => tickDatasets([]));
+
+            document.querySelectorAll("[data-range]").forEach((button) => {
+                button.addEventListener("click", () => applyQuickRange(button.dataset.range));
+            });
+
+            testDbConnection();
+            refreshStatus();
+            refreshLogs();
+        }
+
+        initialise();
+    </script>
+</body>
+</html>
