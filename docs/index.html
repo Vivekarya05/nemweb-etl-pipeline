@@ -1,198 +1,270 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>AEMO NEMWeb Market Data Pipeline</title> <link rel="stylesheet" href="./styles.css" /> </head> <body> <div class="page"> <header class="hero"> <div class="hero-top"> <div class="brand-pill">Portfolio Demo</div> <label class="theme-toggle"> <input id="themeToggle" type="checkbox" /> <span id="themeLabel">Dark mode</span> </label> </div>
-  <h1>AEMO NEMWeb Market Data Pipeline</h1>
-  <p class="subtitle">
-    Dashboard demo for public AEMO market data ingestion into PostgreSQL.
-  </p>
-  <p class="hero-copy">
-    This is a static portfolio demo of the dashboard experience. You can explore the
-    workflow, filters, business models, and UI states. For a live ETL walkthrough
-    and backend-connected demo, please contact me directly.
-  </p>
-</header>
-
-<section class="card">
-  <div class="section-head">
-    <h2>Pipeline Setup</h2>
-    <p>Choose a date range, select a business case, review tables, and try the demo actions.</p>
-  </div>
-
-  <div class="setup-grid">
-    <div class="panel">
-      <h3>Date Slicers</h3>
-      <div class="chip-row">
-        <button class="chip" data-range="today">Today</button>
-        <button class="chip" data-range="yesterday">Yesterday</button>
-        <button class="chip" data-range="week">Current Week</button>
-        <button class="chip" data-range="7days">Last 7 Days</button>
-        <button class="chip" data-range="month">Current Month</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AEMO NEMWeb Market Data Pipeline</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="brand-pill">Portfolio Demo</div>
+        <label class="theme-toggle">
+          <input id="themeToggle" type="checkbox" />
+          <span id="themeLabel">Dark mode</span>
+        </label>
       </div>
-    </div>
 
-    <div class="panel">
-      <h3>Date Range</h3>
-      <div class="field-grid two">
-        <div class="field">
-          <label for="startDate">Start date</label>
-          <input id="startDate" type="date" />
-        </div>
-        <div class="field">
-          <label for="endDate">End date</label>
-          <input id="endDate" type="date" />
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>Month Selection</h3>
-      <div class="field-grid two">
-        <div class="field">
-          <label for="yearSelect">Year</label>
-          <select id="yearSelect"></select>
-        </div>
-        <div class="field">
-          <label for="monthSelect">Month</label>
-          <select id="monthSelect"></select>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="setup-grid second-row">
-    <div class="panel">
-      <h3>Business Model</h3>
-      <div class="field">
-        <label for="businessModel">Analysis type</label>
-        <select id="businessModel"></select>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>Model Guidance</h3>
-      <p id="modelDescription" class="muted"></p>
-      <p id="modelDatasets" class="muted top-gap"></p>
-    </div>
-  </div>
-
-  <div class="section-subhead">
-    <h3>Datasets</h3>
-    <p>Recommended core tables are preselected for the chosen use case.</p>
-  </div>
-
-  <div class="toolbar">
-    <button id="useRecommended" class="secondary-btn">Use Recommended</button>
-    <button id="useCore" class="secondary-btn">Use Enabled Core</button>
-    <button id="clearSelection" class="secondary-btn">Clear Selection</button>
-  </div>
-
-  <div id="datasetGrid" class="dataset-grid"></div>
-
-  <div class="setup-grid ops-row">
-    <div class="panel">
-      <h3>Operational Checks</h3>
-      <p class="muted">
-        This public page is a frontend-only demo. Live ETL execution is available on request.
+      <h1>AEMO NEMWeb Market Data Pipeline</h1>
+      <p class="subtitle">
+        Dashboard demo for public AEMO market data ingestion into PostgreSQL.
       </p>
-      <div class="status-box">
-        Demo Mode: backend actions are disabled on GitHub Pages.
+      <p class="hero-copy">
+        This is a static portfolio demo of the dashboard experience. You can explore the
+        workflow, filters, business models, and UI states. For a live ETL walkthrough
+        and backend-connected demo, please contact me directly.
+      </p>
+    </header>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Pipeline Setup</h2>
+        <p>Choose a date range, select a business case, review tables, and try the demo actions.</p>
       </div>
-    </div>
-  </div>
 
-  <div class="action-row">
-    <button id="runPipelineBtn" class="primary-btn">Run Pipeline</button>
-    <button id="checkExistingBtn" class="secondary-btn">Check Existing Data</button>
-    <button id="testDbBtn" class="secondary-btn">Test Database Connection</button>
-    <button id="clearLogsBtn" class="secondary-btn">Clear Logs</button>
-  </div>
-</section>
+      <div class="setup-grid">
+        <div class="panel">
+          <h3>Date Slicers</h3>
+          <div class="chip-row">
+            <button class="chip" data-range="today">Today</button>
+            <button class="chip" data-range="yesterday">Yesterday</button>
+            <button class="chip" data-range="week">Current Week</button>
+            <button class="chip" data-range="7days">Last 7 Days</button>
+            <button class="chip" data-range="month">Current Month</button>
+          </div>
+        </div>
 
-<section class="card">
-  <div class="section-head">
-    <h2>Run Status</h2>
-    <p>UI preview of the execution flow and result layout.</p>
-  </div>
+        <div class="panel">
+          <h3>Date Range</h3>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="startDate">Start date</label>
+              <input id="startDate" type="date" />
+            </div>
+            <div class="field">
+              <label for="endDate">End date</label>
+              <input id="endDate" type="date" />
+            </div>
+          </div>
+        </div>
 
-  <div class="status-layout">
-    <div class="panel big-status">
-      <div class="status-top">
-        <span class="badge idle">Idle</span>
-        <span class="runtime">00:00</span>
+        <div class="panel">
+          <h3>Month Selection</h3>
+          <div class="field-grid two">
+            <div class="field">
+              <label for="yearSelect">Year</label>
+              <select id="yearSelect"></select>
+            </div>
+            <div class="field">
+              <label for="monthSelect">Month</label>
+              <select id="monthSelect"></select>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="muted">This GitHub Pages version does not execute the live pipeline.</p>
-    </div>
 
-    <div class="summary-grid">
-      <div class="summary-card"><strong>Idle</strong><span>Current status</span></div>
-      <div class="summary-card"><strong>Demo</strong><span>Mode</span></div>
-      <div class="summary-card"><strong>Custom</strong><span>Business model</span></div>
-      <div class="summary-card"><strong>0</strong><span>Rows loaded</span></div>
-      <div class="summary-card"><strong>0</strong><span>Tables created</span></div>
-      <div class="summary-card"><strong>0</strong><span>Existing rows skipped</span></div>
-    </div>
-  </div>
+      <div class="setup-grid second-row">
+        <div class="panel">
+          <h3>Business Model</h3>
+          <div class="field">
+            <label for="businessModel">Analysis type</label>
+            <select id="businessModel"></select>
+          </div>
+        </div>
 
-  <div class="section-subhead top-gap">
-    <h3>Pipeline Stages</h3>
-    <p>These are shown for experience and walkthrough only.</p>
-  </div>
+        <div class="panel">
+          <h3>Model Guidance</h3>
+          <p id="modelDescription" class="muted"></p>
+          <p id="modelDatasets" class="muted top-gap"></p>
+        </div>
+      </div>
 
-  <div class="stages-grid">
-    <div class="stage-card">1. Connecting to database</div>
-    <div class="stage-card">2. Reading dataset config</div>
-    <div class="stage-card">3. Checking duplicate data</div>
-    <div class="stage-card">4. Scanning NEMWeb directories</div>
-    <div class="stage-card">5. Downloading files</div>
-    <div class="stage-card">6. Extracting ZIP files</div>
-    <div class="stage-card">7. Parsing AEMO C/I/D records</div>
-    <div class="stage-card">8. Cleaning data</div>
-    <div class="stage-card">9. Validating data</div>
-    <div class="stage-card">10. Creating schemas/tables</div>
-    <div class="stage-card">11. Loading into PostgreSQL</div>
-    <div class="stage-card">12. Completed</div>
-  </div>
-</section>
-
-<section class="card">
-  <div class="two-col">
-    <div>
       <div class="section-subhead">
-        <h3>Dataset Results</h3>
-        <p>Representative result cards for the demo.</p>
+        <h3>Datasets</h3>
+        <p>Recommended core tables are preselected for the chosen use case.</p>
       </div>
 
-      <div class="result-card">
-        <div class="result-head">
-          <h4>Dispatch Price</h4>
-          <span class="badge complete">Demo</span>
-        </div>
-        <div class="pill-row">
-          <span class="pill">Files detected: 288</span>
-          <span class="pill">Rows loaded: 0</span>
-          <span class="pill">Table: raw.dispatch_price</span>
-        </div>
-        <p class="muted top-gap">
-          In the live version, this dataset downloads matching NEMWeb files, parses AEMO records,
-          and loads the cleaned output into PostgreSQL.
-        </p>
+      <div class="toolbar">
+        <button id="useRecommended" class="secondary-btn">Use Recommended</button>
+        <button id="useCore" class="secondary-btn">Use Enabled Core</button>
+        <button id="clearSelection" class="secondary-btn">Clear Selection</button>
       </div>
 
-      <div class="result-card">
-        <div class="result-head">
-          <h4>Dispatch Region Summary</h4>
-          <span class="badge complete">Demo</span>
+      <div id="datasetGrid" class="dataset-grid"></div>
+
+      <div class="setup-grid ops-row">
+        <div class="panel">
+          <h3>Operational Checks</h3>
+          <p class="muted">
+            This public page is a frontend-only demo. Live ETL execution is available on request.
+          </p>
+          <div class="status-box">
+            Demo Mode: backend actions are disabled on GitHub Pages.
+          </div>
         </div>
-        <div class="pill-row">
-          <span class="pill">Files detected: 288</span>
-          <span class="pill">Rows loaded: 0</span>
-          <span class="pill">Table: raw.dispatch_regionsum</span>
+      </div>
+
+      <div class="action-row">
+        <button id="runPipelineBtn" class="primary-btn">Run Pipeline</button>
+        <button id="checkExistingBtn" class="secondary-btn">Check Existing Data</button>
+        <button id="testDbBtn" class="secondary-btn">Test Database Connection</button>
+        <button id="clearLogsBtn" class="secondary-btn">Clear Logs</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Run Status</h2>
+        <p>UI preview of the execution flow and result layout.</p>
+      </div>
+
+      <div class="status-layout">
+        <div class="panel big-status">
+          <div class="status-top">
+            <span class="badge idle">Idle</span>
+            <span class="runtime">00:00</span>
+          </div>
+          <p class="muted">This GitHub Pages version does not execute the live pipeline.</p>
         </div>
+
+        <div class="summary-grid">
+          <div class="summary-card"><strong>Idle</strong><span>Current status</span></div>
+          <div class="summary-card"><strong>Demo</strong><span>Mode</span></div>
+          <div class="summary-card"><strong>Custom</strong><span>Business model</span></div>
+          <div class="summary-card"><strong>0</strong><span>Rows loaded</span></div>
+          <div class="summary-card"><strong>0</strong><span>Tables created</span></div>
+          <div class="summary-card"><strong>0</strong><span>Existing rows skipped</span></div>
+        </div>
+      </div>
+
+      <div class="section-subhead top-gap">
+        <h3>Pipeline Stages</h3>
+        <p>These are shown for experience and walkthrough only.</p>
+      </div>
+
+      <div class="stages-grid">
+        <div class="stage-card">1. Connecting to database</div>
+        <div class="stage-card">2. Reading dataset config</div>
+        <div class="stage-card">3. Checking duplicate data</div>
+        <div class="stage-card">4. Scanning NEMWeb directories</div>
+        <div class="stage-card">5. Downloading files</div>
+        <div class="stage-card">6. Extracting ZIP files</div>
+        <div class="stage-card">7. Parsing AEMO C/I/D records</div>
+        <div class="stage-card">8. Cleaning data</div>
+        <div class="stage-card">9. Validating data</div>
+        <div class="stage-card">10. Creating schemas/tables</div>
+        <div class="stage-card">11. Loading into PostgreSQL</div>
+        <div class="stage-card">12. Completed</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="two-col">
+        <div>
+          <div class="section-subhead">
+            <h3>Dataset Results</h3>
+            <p>Representative result cards for the demo.</p>
+          </div>
+
+          <div class="result-card">
+            <div class="result-head">
+              <h4>Dispatch Price</h4>
+              <span class="badge complete">Demo</span>
+            </div>
+            <div class="pill-row">
+              <span class="pill">Files detected: 288</span>
+              <span class="pill">Rows loaded: 0</span>
+              <span class="pill">Table: raw.dispatch_price</span>
+            </div>
+            <p class="muted top-gap">
+              In the live version, this dataset downloads matching NEMWeb files, parses AEMO records,
+              and loads the cleaned output into PostgreSQL.
+            </p>
+          </div>
+
+          <div class="result-card">
+            <div class="result-head">
+              <h4>Dispatch Region Summary</h4>
+              <span class="badge complete">Demo</span>
+            </div>
+            <div class="pill-row">
+              <span class="pill">Files detected: 288</span>
+              <span class="pill">Rows loaded: 0</span>
+              <span class="pill">Table: raw.dispatch_regionsum</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-subhead">
+            <h3>Live Logs</h3>
+            <p>Static preview for portfolio demonstration.</p>
+          </div>
+
+          <div id="logPanel" class="log-panel">[Demo mode]
+2026-05-02 09:00:00 | INFO | dashboard | Portfolio demo loaded
+2026-05-02 09:00:01 | INFO | pipeline | Waiting for live demo request
+2026-05-02 09:00:02 | INFO | status | Backend execution disabled on GitHub Pages
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="contactModal" class="modal show">
+    <div class="modal-card">
+      <h3>Live Demo Access</h3>
+      <p>
+        This GitHub-hosted page is a portfolio demo version of the dashboard.
+        For a live walkthrough of the full Flask + PostgreSQL ETL pipeline,
+        please contact me directly using any of the options below.
+      </p>
+
+      <div class="contact-grid">
+        <a class="contact-btn email-btn" href="mailto:vivek.aryasomayajula@gmail.com">
+          <span class="contact-icon">✉</span>
+          <span>Email Me</span>
+        </a>
+
+        <a
+          class="contact-btn github-btn"
+          href="https://github.com/Vivekarya05"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="contact-icon">⌘</span>
+          <span>GitHub Profile</span>
+        </a>
+
+        <a
+          class="contact-btn linkedin-btn"
+          href="https://www.linkedin.com/in/vivek-energy-analytics"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="contact-icon">in</span>
+          <span>LinkedIn Profile</span>
+        </a>
+      </div>
+
+      <div class="modal-actions">
+        <button id="closeModalBtn" class="secondary-btn">Continue Demo</button>
       </div>
     </div>
+  </div>
 
-    <div>
-      <div class="section-subhead">
-        <h3>Live Logs</h3>
-        <p>Static preview for portfolio demonstration.</p>
-      </div>
-
-      <div id="logPanel" class="log-panel">[Demo mode]
+  <script src="./script.js"></script>
+</body>
+</html>
