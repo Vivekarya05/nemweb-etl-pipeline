@@ -231,22 +231,7 @@ These currently provide the strongest foundation for:
 - renewable integration analysis
 - operational market dashboards
 
-## Suggested Prompt To Use In ChatGPT For Further Project Work
 
-Use the following prompt as a starting point:
 
-> I have built a local AEMO NEMWeb ETL pipeline and dashboard using Python, Flask, pandas, requests, BeautifulSoup, SQLAlchemy, psycopg2, and PostgreSQL.  
-> The pipeline downloads public NEMWeb data directly, parses AEMO C/I/D files, cleans and validates records, checks duplicates, and loads data into PostgreSQL.  
-> The currently enabled core datasets are dispatch_price, dispatch_regionsum, trading_price, trading_regionsum, dispatch_unit_scada, dispatch_constraints, and rooftop_pv_actual.  
-> I want to continue the project by improving business-case coverage, refining table design, expanding advanced datasets, improving analytics outputs, and strengthening documentation and architecture.  
-> Please use the business-case-to-table mapping from my handoff document and help me define the next phase of the project in a structured way.
 
-## File References In This Project
-
-Useful files in the current project:
-
-- [config/datasets.yaml](/Users/vivekarya/Documents/Codex/2026-04-26-act-as-a-senior-python-data/nemweb-etl-pipeline/config/datasets.yaml)
-- [src/utils.py](/Users/vivekarya/Documents/Codex/2026-04-26-act-as-a-senior-python-data/nemweb-etl-pipeline/src/utils.py)
-- [src/main_pipeline.py](/Users/vivekarya/Documents/Codex/2026-04-26-act-as-a-senior-python-data/nemweb-etl-pipeline/src/main_pipeline.py)
-- [web_runner/templates/index.html](/Users/vivekarya/Documents/Codex/2026-04-26-act-as-a-senior-python-data/nemweb-etl-pipeline/web_runner/templates/index.html)
 
