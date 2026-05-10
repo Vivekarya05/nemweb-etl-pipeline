@@ -3,223 +3,365 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AEMO NEMWeb Market Data Pipeline</title>
+  <title>AEMO NEMWeb Market Data Pipeline | Demo Dashboard</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="page">
-    <header class="hero">
-      <div class="hero-top">
-        <div class="brand-pill">Portfolio Demo</div>
-        <label class="theme-toggle">
-          <input id="themeToggle" type="checkbox" />
-          <span id="themeLabel">Dark mode</span>
-        </label>
-      </div>
+    <div class="topbar">
+      <div class="chip">Enhanced Live Dashboard</div>
+      <label class="theme-toggle" for="accentGlow">
+        <input id="accentGlow" type="checkbox" checked />
+        <span>Graph glow</span>
+      </label>
+    </div>
 
-      <h1>AEMO NEMWeb Market Data Pipeline</h1>
-      <p class="subtitle">
-        Dashboard demo for public AEMO market data ingestion into PostgreSQL.
-      </p>
-      <p class="hero-copy">
-        This is a static portfolio demo of the dashboard experience. You can explore the
-        workflow, filters, business models, and UI states. For a live ETL walkthrough
-        and backend-connected demo, please contact me directly.
-      </p>
-    </header>
-
-    <section class="card">
-      <div class="section-head">
-        <h2>Pipeline Setup</h2>
-        <p>Choose a date range, select a business case, review tables, and try the demo actions.</p>
-      </div>
-
-      <div class="setup-grid">
-        <div class="panel">
-          <h3>Date Slicers</h3>
-          <div class="chip-row">
-            <button class="chip" data-range="today">Today</button>
-            <button class="chip" data-range="yesterday">Yesterday</button>
-            <button class="chip" data-range="week">Current Week</button>
-            <button class="chip" data-range="7days">Last 7 Days</button>
-            <button class="chip" data-range="month">Current Month</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Date Range</h3>
-          <div class="field-grid two">
-            <div class="field">
-              <label for="startDate">Start date</label>
-              <input id="startDate" type="date" />
-            </div>
-            <div class="field">
-              <label for="endDate">End date</label>
-              <input id="endDate" type="date" />
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Month Selection</h3>
-          <div class="field-grid two">
-            <div class="field">
-              <label for="yearSelect">Year</label>
-              <select id="yearSelect"></select>
-            </div>
-            <div class="field">
-              <label for="monthSelect">Month</label>
-              <select id="monthSelect"></select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="setup-grid second-row">
-        <div class="panel">
-          <h3>Business Model</h3>
-          <div class="field">
-            <label for="businessModel">Analysis type</label>
-            <select id="businessModel"></select>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Model Guidance</h3>
-          <p id="modelDescription" class="muted"></p>
-          <p id="modelDatasets" class="muted top-gap"></p>
-        </div>
-      </div>
-
-      <div class="section-subhead">
-        <h3>Datasets</h3>
-        <p>Recommended core tables are preselected for the chosen use case.</p>
-      </div>
-
-      <div class="toolbar">
-        <button id="useRecommended" class="secondary-btn">Use Recommended</button>
-        <button id="useCore" class="secondary-btn">Use Enabled Core</button>
-        <button id="clearSelection" class="secondary-btn">Clear Selection</button>
-      </div>
-
-      <div id="datasetGrid" class="dataset-grid"></div>
-
-      <div class="setup-grid ops-row">
-        <div class="panel">
-          <h3>Operational Checks</h3>
-          <p class="muted">
-            This public page is a frontend-only demo. Live ETL execution is available on request.
-          </p>
-          <div class="status-box">
-            Demo Mode: backend actions are disabled on GitHub Pages.
-          </div>
-        </div>
-      </div>
-
-      <div class="action-row">
-        <button id="runPipelineBtn" class="primary-btn">Run Pipeline</button>
-        <button id="checkExistingBtn" class="secondary-btn">Check Existing Data</button>
-        <button id="testDbBtn" class="secondary-btn">Test Database Connection</button>
-        <button id="clearLogsBtn" class="secondary-btn">Clear Logs</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-head">
-        <h2>Run Status</h2>
-        <p>UI preview of the execution flow and result layout.</p>
-      </div>
-
-      <div class="status-layout">
-        <div class="panel big-status">
-          <div class="status-top">
-            <span class="badge idle">Idle</span>
-            <span class="runtime">00:00</span>
-          </div>
-          <p class="muted">This GitHub Pages version does not execute the live pipeline.</p>
-        </div>
-
-        <div class="summary-grid">
-          <div class="summary-card"><strong>Idle</strong><span>Current status</span></div>
-          <div class="summary-card"><strong>Demo</strong><span>Mode</span></div>
-          <div class="summary-card"><strong>Custom</strong><span>Business model</span></div>
-          <div class="summary-card"><strong>0</strong><span>Rows loaded</span></div>
-          <div class="summary-card"><strong>0</strong><span>Tables created</span></div>
-          <div class="summary-card"><strong>0</strong><span>Existing rows skipped</span></div>
-        </div>
-      </div>
-
-      <div class="section-subhead top-gap">
-        <h3>Pipeline Stages</h3>
-        <p>These are shown for experience and walkthrough only.</p>
-      </div>
-
-      <div class="stages-grid">
-        <div class="stage-card">1. Connecting to database</div>
-        <div class="stage-card">2. Reading dataset config</div>
-        <div class="stage-card">3. Checking duplicate data</div>
-        <div class="stage-card">4. Scanning NEMWeb directories</div>
-        <div class="stage-card">5. Downloading files</div>
-        <div class="stage-card">6. Extracting ZIP files</div>
-        <div class="stage-card">7. Parsing AEMO C/I/D records</div>
-        <div class="stage-card">8. Cleaning data</div>
-        <div class="stage-card">9. Validating data</div>
-        <div class="stage-card">10. Creating schemas/tables</div>
-        <div class="stage-card">11. Loading into PostgreSQL</div>
-        <div class="stage-card">12. Completed</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="two-col">
+    <section class="hero">
+      <div class="hero-grid">
         <div>
-          <div class="section-subhead">
-            <h3>Dataset Results</h3>
-            <p>Representative result cards for the demo.</p>
+          <div class="signal">Enhanced operating surface</div>
+          <h1>AEMO NEMWeb Market Data Pipeline</h1>
+          <p>
+            Download, validate, and load Australian electricity market data into PostgreSQL through a more
+            guided, premium workflow for analysts and energy modellers.
+          </p>
+          <div class="mode-row" style="margin-top:18px;">
+            <span class="signal">Guided flow</span>
+            <span class="signal">Live readiness</span>
+            <span class="signal">Run visibility</span>
+            <span class="signal">Outcome clarity</span>
+          </div>
+        </div>
+
+        <div class="hero-aside">
+          <div class="metric-grid">
+            <div class="metric-card">
+              <strong>7</strong>
+              <span class="muted">Workflow sections</span>
+            </div>
+            <div class="metric-card">
+              <strong>4</strong>
+              <span class="muted">Core control layers</span>
+            </div>
+            <div class="metric-card">
+              <strong>Demo</strong>
+              <span class="muted">Static GitHub mode</span>
+            </div>
+            <div class="metric-card">
+              <strong>Vivek</strong>
+              <span class="muted">Energy Analyst</span>
+            </div>
           </div>
 
-          <div class="result-card">
-            <div class="result-head">
-              <h4>Dispatch Price</h4>
-              <span class="badge complete">Demo</span>
-            </div>
-            <div class="pill-row">
-              <span class="pill">Files detected: 288</span>
-              <span class="pill">Rows loaded: 0</span>
-              <span class="pill">Table: raw.dispatch_price</span>
-            </div>
-            <p class="muted top-gap">
-              In the live version, this dataset downloads matching NEMWeb files, parses AEMO records,
-              and loads the cleaned output into PostgreSQL.
+          <div class="panel">
+            <h3>Operating intent</h3>
+            <p class="muted">
+              This GitHub version keeps the workflow, selection experience, checks, logs, and results layout visible
+              while disabling real ETL execution. For a live walkthrough, use the contact options below.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="result-card">
-            <div class="result-head">
-              <h4>Dispatch Region Summary</h4>
-              <span class="badge complete">Demo</span>
+    <section class="summary-bar">
+      <div class="summary-grid">
+        <div class="summary-pill">
+          <strong class="summary-value" id="summaryDateWindow">Not set</strong>
+          <span class="summary-label">Date Window</span>
+        </div>
+        <div class="summary-pill">
+          <strong class="summary-value" id="summaryBusinessModel">Custom</strong>
+          <span class="summary-label">Business Model</span>
+        </div>
+        <div class="summary-pill">
+          <strong class="summary-value" id="summarySelectedDatasets">0 selected</strong>
+          <span class="summary-label">Selected Datasets</span>
+        </div>
+        <div class="summary-pill">
+          <strong class="summary-value" id="summaryExpectedRuntime">Pending</strong>
+          <span class="summary-label">Expected Runtime</span>
+        </div>
+        <div class="summary-pill">
+          <strong class="summary-value" id="summaryReadiness">Ready</strong>
+          <span class="summary-label">Readiness</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Workflow Rail</h2>
+          <p class="section-note">A clear top-level sequence so the page always tells the user where they are and what comes next.</p>
+        </div>
+        <div class="step-badge">Live flow</div>
+      </div>
+
+      <div class="progress-rail">
+        <div class="progress-step active"><strong>01. Dates</strong><span>Choose the right market window.</span></div>
+        <div class="progress-step active"><strong>02. Model</strong><span>Select the analysis lens.</span></div>
+        <div class="progress-step active"><strong>03. Datasets</strong><span>Curate the bundle.</span></div>
+        <div class="progress-step active"><strong>04. Checks</strong><span>Confirm load readiness.</span></div>
+        <div class="progress-step live"><strong>05. Run</strong><span>Track execution as it happens.</span></div>
+        <div class="progress-step"><strong>06. Results</strong><span>Read final outcomes and health.</span></div>
+      </div>
+    </section>
+
+    <div class="review-tabs">
+      <button class="review-tab active" data-tab="time"><span>01</span> Time Slicers</button>
+      <button class="review-tab" data-tab="model"><span>02</span> Model + Overview</button>
+      <button class="review-tab" data-tab="datasets"><span>03</span> Datasets</button>
+      <button class="review-tab" data-tab="checks"><span>04</span> Checks</button>
+      <button class="review-tab" data-tab="run"><span>05</span> Run Status</button>
+      <button class="review-tab" data-tab="logs"><span>06</span> Logs</button>
+      <button class="review-tab" data-tab="results"><span>07</span> Results</button>
+    </div>
+
+    <section class="section review-panel active" id="time">
+      <div class="section-head">
+        <div>
+          <h2>Time Slicers</h2>
+          <p class="section-note">Keep the time controls easy and familiar, but present them in a cleaner, more premium way.</p>
+        </div>
+        <div class="step-badge">01 | Time control</div>
+      </div>
+
+      <div class="three-col">
+        <div class="panel">
+          <h3>Date slicers</h3>
+          <div class="compact-slicer-grid">
+            <button class="compact-slicer" type="button" data-range="today">Today</button>
+            <button class="compact-slicer" type="button" data-range="yesterday">Yesterday</button>
+            <button class="compact-slicer" type="button" data-range="current_week">Current Week</button>
+            <button class="compact-slicer" type="button" data-range="last_7_days">Last 7 Days</button>
+            <button class="compact-slicer" type="button" data-range="current_month">Current Month</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Date range</h3>
+          <div class="preset-grid two-col-mini">
+            <div class="preset-card">
+              <strong>Start</strong>
+              <input id="startDate" class="live-input" type="date" />
             </div>
-            <div class="pill-row">
-              <span class="pill">Files detected: 288</span>
-              <span class="pill">Rows loaded: 0</span>
-              <span class="pill">Table: raw.dispatch_regionsum</span>
+            <div class="preset-card">
+              <strong>End</strong>
+              <input id="endDate" class="live-input" type="date" />
             </div>
           </div>
         </div>
 
-        <div>
-          <div class="section-subhead">
-            <h3>Live Logs</h3>
-            <p>Static preview for portfolio demonstration.</p>
-          </div>
-
-          <div id="logPanel" class="log-panel">[Demo mode]
-2026-05-02 09:00:00 | INFO | dashboard | Portfolio demo loaded
-2026-05-02 09:00:01 | INFO | pipeline | Waiting for live demo request
-2026-05-02 09:00:02 | INFO | status | Backend execution disabled on GitHub Pages
+        <div class="panel">
+          <h3>Month selection</h3>
+          <div class="preset-grid two-col-mini">
+            <div class="preset-card">
+              <strong>Year</strong>
+              <select id="yearSelect" class="live-select"></select>
+            </div>
+            <div class="preset-card">
+              <strong>Month</strong>
+              <select id="monthSelect" class="live-select"></select>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="section review-panel" id="model">
+      <div class="section-head">
+        <div>
+          <h2>Model + Overview</h2>
+          <p class="section-note">Keep the original model dropdown, but make the overview surface react visually to the selected model.</p>
+        </div>
+        <div class="step-badge">02 | Model fit</div>
+      </div>
+
+      <div class="model-shell">
+        <div class="panel">
+          <h3>Model selection</h3>
+          <div class="model-select-shell">
+            <select id="businessModel" class="model-select"></select>
+            <div class="model-select-note">
+              <strong>Selected model workflow</strong>
+              <p class="muted">
+                Keep the original dropdown behavior. Only the overview container should react visually when the selected model changes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="model-overview-shell theme-renewables" id="businessModelOverview">
+          <div class="model-overview-head">
+            <div>
+              <h3 id="businessModelOverviewTitle" style="margin:0 0 8px;">Renewable Integration Analysis</h3>
+              <p id="businessModelDescription" class="muted">
+                Best for combining demand, rooftop PV, intermittent forecasts, and SCADA context into one renewable-focused operating view.
+              </p>
+            </div>
+          </div>
+          <div class="model-theme-badges" id="businessModelBadgeRow"></div>
+          <p id="businessModelDatasets" class="footer-note">Recommended datasets will appear here.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section review-panel" id="datasets">
+      <div class="section-head">
+        <div>
+          <h2>Datasets</h2>
+          <p class="section-note">Selection controls become a real command surface with richer metadata and better states.</p>
+        </div>
+        <div class="step-badge">03 | Dataset curation</div>
+      </div>
+
+      <div class="panel">
+        <h3>Selection controls</h3>
+        <div class="action-row">
+          <button id="useRecommendedButton" class="toolbar-chip">Use Recommended</button>
+          <button id="useEnabledButton" class="toolbar-chip">Use Enabled Core</button>
+          <button id="clearSelectionButton" class="toolbar-chip">Clear Selection</button>
+          <span class="toolbar-chip static">Advanced available</span>
+          <span class="toolbar-chip static">Operator View</span>
+        </div>
+      </div>
+
+      <div class="filter-row" style="margin:16px 0;">
+        <span class="filter-chip active">All</span>
+        <span class="filter-chip">Core</span>
+        <span class="filter-chip">Advanced</span>
+        <span class="filter-chip">Forecast</span>
+        <span class="filter-chip">Constraints</span>
+        <span class="filter-chip">FCAS</span>
+        <span class="filter-chip">Renewables</span>
+      </div>
+
+      <div class="search-bar">
+        <strong>Search + summary</strong>
+        <span id="selectedDatasetSummary" class="muted">Select datasets to see the live count and current bundle summary here.</span>
+      </div>
+
+      <div id="datasetGrid" class="dataset-grid-live"></div>
+
+      <div id="formMessage" class="form-message" style="display:none;"></div>
+    </section>
+
+    <section class="section review-panel" id="checks">
+      <div class="section-head">
+        <div>
+          <h2>Checks</h2>
+          <p class="section-note">Turn checks into a true readiness panel so users understand whether it is safe to run.</p>
+        </div>
+        <div class="step-badge">04 | Confidence panel</div>
+      </div>
+
+      <div class="checks-grid">
+        <div class="check-card good">
+          <h3>Database readiness</h3>
+          <p id="dbConnectionStatus" class="muted">Database status not tested yet.</p>
+          <div class="action-row" style="margin-top:14px;">
+            <button id="testDbButton" class="toolbar-chip">Test Database Connection</button>
+            <button id="checkExistingButton" class="toolbar-chip">Check Existing Data</button>
+          </div>
+        </div>
+
+        <div class="check-card warn">
+          <h3>Existing data check</h3>
+          <div id="existingDataPanel">
+            <p class="muted">No duplicate check run yet. Use Check Existing Data to populate this panel.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section review-panel" id="run">
+      <div class="section-head">
+        <div>
+          <h2>Run Status</h2>
+          <p class="section-note">This becomes the visual hero during execution, with real stage emphasis and throughput context.</p>
+        </div>
+        <div class="step-badge">05 | Operator view</div>
+      </div>
+
+      <div class="status-grid">
+        <div class="panel status-hero">
+          <div class="status-top">
+            <div id="currentStatusPill" class="status-chip">Idle</div>
+            <div id="runtimeValue" class="runtime">00:00</div>
+          </div>
+          <h3 id="runHeadline" style="margin:0 0 8px;">Pipeline ready</h3>
+          <p id="statusMessage" class="muted">This GitHub demo shows the run state layout without executing the live ETL workflow.</p>
+          <div id="processingRow" class="muted" style="margin-top:14px; display:none;">Pipeline is processing. Please keep this window open.</div>
+          <div id="progressStageList" class="stage-stack">
+            <div class="status-stage"><span>Waiting for run state</span><span class="stage-state pending">Pending</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Operational throughput</h3>
+          <div id="summaryCards" class="score-grid">
+            <div class="check-score"><strong>Idle</strong><span class="muted">Current status</span></div>
+            <div class="check-score"><strong>N/A</strong><span class="muted">Date range</span></div>
+            <div class="check-score"><strong>Custom</strong><span class="muted">Business model</span></div>
+            <div class="check-score"><strong>0</strong><span class="muted">Rows loaded</span></div>
+          </div>
+
+          <div class="panel inner-panel">
+            <h3 style="margin-top:0;">Run actions</h3>
+            <div class="action-row">
+              <button id="runButton" class="toolbar-chip primary run">Run Pipeline</button>
+              <button id="clearLogsButton" class="toolbar-chip primary warn">Clear Logs</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section review-panel" id="logs">
+      <div class="section-head">
+        <div>
+          <h2>Logs</h2>
+          <p class="section-note">Keep logs simple, but improve filtering and highlight what matters.</p>
+        </div>
+        <div class="step-badge">06 | Signal view</div>
+      </div>
+
+      <div class="log-card">
+        <div class="terminal">
+          <div class="terminal-head">
+            <div class="filter-row">
+              <span class="filter-chip active">All</span>
+              <span class="filter-chip">Info</span>
+              <span class="filter-chip">Warnings</span>
+              <span class="filter-chip">Errors</span>
+            </div>
+            <span class="mini-chip">Auto-scroll on</span>
+          </div>
+          <div id="logPanel" class="terminal-body">Waiting for pipeline activity...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section review-panel" id="results">
+      <div class="section-head">
+        <div>
+          <h2>Results</h2>
+          <p class="section-note">Dataset results should explain outcome, not just show numbers.</p>
+        </div>
+        <div class="step-badge">07 | Outcome layer</div>
+      </div>
+
+      <div class="results-grid">
+        <div id="resultCards" class="results-cards-grid">
+          <div class="result-card warn">
+            <h3>No pipeline run yet</h3>
+            <p class="muted" style="margin-top:14px;">Use the demo actions to preview how results, statuses, and messages appear.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="footer-note">Designed and operated by Vivek Bharadwaj Aryasomayajula, Energy Analyst.</p>
     </section>
   </div>
 
@@ -260,7 +402,7 @@
       </div>
 
       <div class="modal-actions">
-        <button id="closeModalBtn" class="secondary-btn">Continue Demo</button>
+        <button id="closeModalBtn" class="toolbar-chip">Continue Demo</button>
       </div>
     </div>
   </div>
