@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AEMO NEMWeb Market Data Pipeline | Demo Dashboard</title>
+  <title>AEMO NEMWeb Market Data Pipeline | Enhanced Dashboard</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="page">
     <div class="topbar">
-      <div class="chip">Enhanced Live Dashboard</div>
+      <div class="chip" id="requestDemoChip">Enhanced Live Dashboard</div>
       <label class="theme-toggle" for="accentGlow">
         <input id="accentGlow" type="checkbox" checked />
         <span>Graph glow</span>
@@ -32,7 +32,6 @@
             <span class="signal">Outcome clarity</span>
           </div>
         </div>
-
         <div class="hero-aside">
           <div class="metric-grid">
             <div class="metric-card">
@@ -44,20 +43,19 @@
               <span class="muted">Core control layers</span>
             </div>
             <div class="metric-card">
-              <strong>Demo</strong>
-              <span class="muted">Static GitHub mode</span>
+              <strong>Live</strong>
+              <span class="muted">Pipeline API status</span>
             </div>
             <div class="metric-card">
               <strong>Vivek</strong>
               <span class="muted">Energy Analyst</span>
             </div>
           </div>
-
           <div class="panel">
             <h3>Operating intent</h3>
             <p class="muted">
-              This GitHub version keeps the workflow, selection experience, checks, logs, and results layout visible
-              while disabling real ETL execution. For a live walkthrough, use the contact options below.
+              This enhanced route keeps the original backend workflow intact while presenting the live controls,
+              checks, logs, and results in a cleaner product-style interface.
             </p>
           </div>
         </div>
@@ -66,26 +64,11 @@
 
     <section class="summary-bar">
       <div class="summary-grid">
-        <div class="summary-pill">
-          <strong class="summary-value" id="summaryDateWindow">Not set</strong>
-          <span class="summary-label">Date Window</span>
-        </div>
-        <div class="summary-pill">
-          <strong class="summary-value" id="summaryBusinessModel">Custom</strong>
-          <span class="summary-label">Business Model</span>
-        </div>
-        <div class="summary-pill">
-          <strong class="summary-value" id="summarySelectedDatasets">0 selected</strong>
-          <span class="summary-label">Selected Datasets</span>
-        </div>
-        <div class="summary-pill">
-          <strong class="summary-value" id="summaryExpectedRuntime">Pending</strong>
-          <span class="summary-label">Expected Runtime</span>
-        </div>
-        <div class="summary-pill">
-          <strong class="summary-value" id="summaryReadiness">Ready</strong>
-          <span class="summary-label">Readiness</span>
-        </div>
+        <div class="summary-pill"><strong class="summary-value" id="summaryDateWindow">Not set</strong><span class="summary-label">Date Window</span></div>
+        <div class="summary-pill"><strong class="summary-value" id="summaryBusinessModel">Custom</strong><span class="summary-label">Business Model</span></div>
+        <div class="summary-pill"><strong class="summary-value" id="summarySelectedDatasets">0 selected</strong><span class="summary-label">Selected Datasets</span></div>
+        <div class="summary-pill"><strong class="summary-value" id="summaryExpectedRuntime">Pending</strong><span class="summary-label">Expected Runtime</span></div>
+        <div class="summary-pill"><strong class="summary-value" id="summaryReadiness">Ready</strong><span class="summary-label">Readiness</span></div>
       </div>
     </section>
 
@@ -97,7 +80,6 @@
         </div>
         <div class="step-badge">Live flow</div>
       </div>
-
       <div class="progress-rail">
         <div class="progress-step active"><strong>01. Dates</strong><span>Choose the right market window.</span></div>
         <div class="progress-step active"><strong>02. Model</strong><span>Select the analysis lens.</span></div>
@@ -126,45 +108,32 @@
         </div>
         <div class="step-badge">01 | Time control</div>
       </div>
-
       <div class="three-col">
         <div class="panel">
           <h3>Date slicers</h3>
           <div class="compact-slicer-grid">
-            <button class="compact-slicer" type="button" data-range="today">Today</button>
-            <button class="compact-slicer" type="button" data-range="yesterday">Yesterday</button>
-            <button class="compact-slicer" type="button" data-range="current_week">Current Week</button>
-            <button class="compact-slicer" type="button" data-range="last_7_days">Last 7 Days</button>
-            <button class="compact-slicer" type="button" data-range="current_month">Current Month</button>
+            <button class="compact-slicer live-button" type="button" data-range="today">Today</button>
+            <button class="compact-slicer live-button" type="button" data-range="yesterday">Yesterday</button>
+            <button class="compact-slicer live-button" type="button" data-range="current_week">Current Week</button>
+            <button class="compact-slicer live-button" type="button" data-range="last_7_days">Last 7 Days</button>
+            <button class="compact-slicer live-button" type="button" data-range="current_month">Current Month</button>
           </div>
         </div>
-
         <div class="panel">
           <h3>Date range</h3>
           <div class="preset-grid two-col-mini">
-            <div class="preset-card">
-              <strong>Start</strong>
-              <input id="startDate" class="live-input" type="date" />
-            </div>
-            <div class="preset-card">
-              <strong>End</strong>
-              <input id="endDate" class="live-input" type="date" />
-            </div>
+            <div class="preset-card"><strong>Start</strong><input id="startDate" class="live-input" type="date" /></div>
+            <div class="preset-card"><strong>End</strong><input id="endDate" class="live-input" type="date" /></div>
           </div>
+          <p class="muted" style="margin-top:14px;">Use this area exactly like the current dashboard, just with stronger spacing and clearer inputs.</p>
         </div>
-
         <div class="panel">
           <h3>Month selection</h3>
           <div class="preset-grid two-col-mini">
-            <div class="preset-card">
-              <strong>Year</strong>
-              <select id="yearSelect" class="live-select"></select>
-            </div>
-            <div class="preset-card">
-              <strong>Month</strong>
-              <select id="monthSelect" class="live-select"></select>
-            </div>
+            <div class="preset-card"><strong>Year</strong><select id="yearSelect" class="live-select"></select></div>
+            <div class="preset-card"><strong>Month</strong><select id="monthSelect" class="live-select"></select></div>
           </div>
+          <p class="muted" style="margin-top:14px;">Keep month-based loading available for archive use, but make it feel as simple as the original dashboard.</p>
         </div>
       </div>
     </section>
@@ -173,11 +142,10 @@
       <div class="section-head">
         <div>
           <h2>Model + Overview</h2>
-          <p class="section-note">Keep the original model dropdown, but make the overview surface react visually to the selected model.</p>
+          <p class="section-note">Use the original list-style model selection, but make the overview surface react visually to the selected model.</p>
         </div>
         <div class="step-badge">02 | Model fit</div>
       </div>
-
       <div class="model-shell">
         <div class="panel">
           <h3>Model selection</h3>
@@ -185,20 +153,15 @@
             <select id="businessModel" class="model-select"></select>
             <div class="model-select-note">
               <strong>Selected model workflow</strong>
-              <p class="muted">
-                Keep the original dropdown behavior. Only the overview container should react visually when the selected model changes.
-              </p>
+              <p class="muted">Keep the original dropdown behavior. Only the overview container should react visually when the selected model changes.</p>
             </div>
           </div>
         </div>
-
         <div class="model-overview-shell theme-renewables" id="businessModelOverview">
           <div class="model-overview-head">
             <div>
               <h3 id="businessModelOverviewTitle" style="margin:0 0 8px;">Renewable Integration Analysis</h3>
-              <p id="businessModelDescription" class="muted">
-                Best for combining demand, rooftop PV, intermittent forecasts, and SCADA context into one renewable-focused operating view.
-              </p>
+              <p id="businessModelDescription" class="muted">Best for combining demand, rooftop PV, intermittent forecasts, and SCADA context into one renewable-focused operating view.</p>
             </div>
           </div>
           <div class="model-theme-badges" id="businessModelBadgeRow"></div>
@@ -215,18 +178,16 @@
         </div>
         <div class="step-badge">03 | Dataset curation</div>
       </div>
-
       <div class="panel">
         <h3>Selection controls</h3>
         <div class="action-row">
-          <button id="useRecommendedButton" class="toolbar-chip">Use Recommended</button>
-          <button id="useEnabledButton" class="toolbar-chip">Use Enabled Core</button>
-          <button id="clearSelectionButton" class="toolbar-chip">Clear Selection</button>
-          <span class="toolbar-chip static">Advanced available</span>
-          <span class="toolbar-chip static">Operator View</span>
+          <button id="useRecommendedButton" class="toolbar-chip live-button">Use Recommended</button>
+          <button id="useEnabledButton" class="toolbar-chip live-button">Use Enabled Core</button>
+          <button id="clearSelectionButton" class="toolbar-chip live-button">Clear Selection</button>
+          <span class="toolbar-chip">Advanced available</span>
+          <span class="toolbar-chip">Operator View</span>
         </div>
       </div>
-
       <div class="filter-row" style="margin:16px 0;">
         <span class="filter-chip active">All</span>
         <span class="filter-chip">Core</span>
@@ -236,14 +197,8 @@
         <span class="filter-chip">FCAS</span>
         <span class="filter-chip">Renewables</span>
       </div>
-
-      <div class="search-bar">
-        <strong>Search + summary</strong>
-        <span id="selectedDatasetSummary" class="muted">Select datasets to see the live count and current bundle summary here.</span>
-      </div>
-
+      <div class="search-bar"><strong>Search + summary</strong><span id="selectedDatasetSummary" class="muted">Select datasets to see the live count and current bundle summary here.</span></div>
       <div id="datasetGrid" class="dataset-grid-live"></div>
-
       <div id="formMessage" class="form-message" style="display:none;"></div>
     </section>
 
@@ -255,17 +210,15 @@
         </div>
         <div class="step-badge">04 | Confidence panel</div>
       </div>
-
       <div class="checks-grid">
         <div class="check-card good">
           <h3>Database readiness</h3>
           <p id="dbConnectionStatus" class="muted">Database status not tested yet.</p>
           <div class="action-row" style="margin-top:14px;">
-            <button id="testDbButton" class="toolbar-chip">Test Database Connection</button>
-            <button id="checkExistingButton" class="toolbar-chip">Check Existing Data</button>
+            <button id="testDbButton" class="toolbar-chip live-button">Test Database Connection</button>
+            <button id="checkExistingButton" class="toolbar-chip live-button">Check Existing Data</button>
           </div>
         </div>
-
         <div class="check-card warn">
           <h3>Existing data check</h3>
           <div id="existingDataPanel">
@@ -279,11 +232,10 @@
       <div class="section-head">
         <div>
           <h2>Run Status</h2>
-          <p class="section-note">This becomes the visual hero during execution, with real stage emphasis and throughput context.</p>
+          <p class="section-note">This should become the visual hero during execution, with real stage emphasis and throughput context.</p>
         </div>
         <div class="step-badge">05 | Operator view</div>
       </div>
-
       <div class="status-grid">
         <div class="panel status-hero">
           <div class="status-top">
@@ -291,13 +243,12 @@
             <div id="runtimeValue" class="runtime">00:00</div>
           </div>
           <h3 id="runHeadline" style="margin:0 0 8px;">Pipeline ready</h3>
-          <p id="statusMessage" class="muted">This GitHub demo shows the run state layout without executing the live ETL workflow.</p>
+          <p id="statusMessage" class="muted">The live state will appear here once the pipeline starts or the status API returns a current run.</p>
           <div id="processingRow" class="muted" style="margin-top:14px; display:none;">Pipeline is processing. Please keep this window open.</div>
           <div id="progressStageList" class="stage-stack">
             <div class="status-stage"><span>Waiting for run state</span><span class="stage-state pending">Pending</span></div>
           </div>
         </div>
-
         <div class="panel">
           <h3>Operational throughput</h3>
           <div id="summaryCards" class="score-grid">
@@ -306,12 +257,11 @@
             <div class="check-score"><strong>Custom</strong><span class="muted">Business model</span></div>
             <div class="check-score"><strong>0</strong><span class="muted">Rows loaded</span></div>
           </div>
-
-          <div class="panel inner-panel">
+          <div class="panel" style="margin-top:16px; padding:16px;">
             <h3 style="margin-top:0;">Run actions</h3>
             <div class="action-row">
-              <button id="runButton" class="toolbar-chip primary run">Run Pipeline</button>
-              <button id="clearLogsButton" class="toolbar-chip primary warn">Clear Logs</button>
+              <button id="runButton" class="toolbar-chip live-button primary run">Run Pipeline</button>
+              <button id="clearLogsButton" class="toolbar-chip live-button primary warn">Clear Logs</button>
             </div>
           </div>
         </div>
@@ -326,7 +276,6 @@
         </div>
         <div class="step-badge">06 | Signal view</div>
       </div>
-
       <div class="log-card">
         <div class="terminal">
           <div class="terminal-head">
@@ -351,58 +300,42 @@
         </div>
         <div class="step-badge">07 | Outcome layer</div>
       </div>
-
       <div class="results-grid">
         <div id="resultCards" class="results-cards-grid">
           <div class="result-card warn">
             <h3>No pipeline run yet</h3>
-            <p class="muted" style="margin-top:14px;">Use the demo actions to preview how results, statuses, and messages appear.</p>
+            <p class="muted" style="margin-top:14px;">Run the pipeline to see live dataset outcomes, file counts, rows loaded, and failure reasons here.</p>
           </div>
         </div>
       </div>
-
       <p class="footer-note">Designed and operated by Vivek Bharadwaj Aryasomayajula, Energy Analyst.</p>
     </section>
   </div>
 
-  <div id="contactModal" class="modal show">
+  <div id="contactModal" class="modal">
     <div class="modal-card">
       <h3>Live Demo Access</h3>
       <p>
-        This GitHub-hosted page is a portfolio demo version of the dashboard.
+        This GitHub-hosted page is a static demo of the enhanced dashboard.
         For a live walkthrough of the full Flask + PostgreSQL ETL pipeline,
         please contact me directly using any of the options below.
       </p>
-
       <div class="contact-grid">
         <a class="contact-btn email-btn" href="mailto:vivek.aryasomayajula@gmail.com">
           <span class="contact-icon">✉</span>
           <span>Email Me</span>
         </a>
-
-        <a
-          class="contact-btn github-btn"
-          href="https://github.com/Vivekarya05"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="contact-btn github-btn" href="https://github.com/Vivekarya05" target="_blank" rel="noopener noreferrer">
           <span class="contact-icon">⌘</span>
           <span>GitHub Profile</span>
         </a>
-
-        <a
-          class="contact-btn linkedin-btn"
-          href="https://www.linkedin.com/in/vivek-energy-analytics"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="contact-btn linkedin-btn" href="https://www.linkedin.com/in/vivek-energy-analytics" target="_blank" rel="noopener noreferrer">
           <span class="contact-icon">in</span>
           <span>LinkedIn Profile</span>
         </a>
       </div>
-
       <div class="modal-actions">
-        <button id="closeModalBtn" class="toolbar-chip">Continue Demo</button>
+        <button id="closeModalBtn" class="toolbar-chip live-button">Continue Demo</button>
       </div>
     </div>
   </div>
